@@ -10,6 +10,7 @@ const downloadURI = (t, e) => {
   result = (t, e, n) => {
     j$("#p-" + e).html(t);
     let d = t.toDataURL();
+    console.log(d);
     downloadURI(d, e + ".png");
   };
 setTimeout(async () => {

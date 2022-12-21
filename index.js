@@ -15,12 +15,12 @@ const tweet = async () => {
       media_ids.push(mediaId);
       console.log(`${i + 1}번째 이미지 업로드 완료`);
     }
-    await twitterClient.v2.tweet({
-      text: "여친과 살짝 다투었어요 PC카톡 vs 핸드폰카톡",
-      media: {
-        media_ids,
-      },
-    });
+    // await twitterClient.v2.tweet({
+    //   text: "여친과 살짝 다투었어요 PC카톡 vs 핸드폰카톡",
+    //   media: {
+    //     media_ids,
+    //   },
+    // });
     console.log("done");
   } catch (e) {
     console.log(e);
