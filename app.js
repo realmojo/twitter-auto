@@ -178,7 +178,7 @@ app.post("/upload", async (req, res) => {
   }
 });
 
-const port = 4000;
+const port = process.env.PORT || 4000;
 server.listen(port, () => {
   console.log(`Twtitter auto upload Server Open Port: ${port}`);
 });
