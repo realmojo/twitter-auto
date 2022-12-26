@@ -10,8 +10,8 @@ const downloadURI = (t, e) => {
   result = (t, e, n) => {
     j$("#p-" + e).html(t);
     let d = t.toDataURL();
+    d = d.replace("data:image/png;base64,", "");
     console.log(d);
-    downloadURI(d, e + ".png");
   };
 setTimeout(async () => {
   j$("body").append("<div id='p-title'>title</div>"),
