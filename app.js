@@ -32,6 +32,7 @@ const getTrends = async () => {
     headers: {
       Authorization:
         "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
+      "x-twitter-client-language": "ko",
       "x-csrf-token":
         "72844c9645cad01055f164fd64810e13b448199512d5fd369711ff71d59539864c883fc9eb52f503dbd89bb814669819730ad8e0b855ac701c1b0fa40b54fc67a6c559765b6f0bd2b98083d43216caa0",
     },
