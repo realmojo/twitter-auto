@@ -24,6 +24,21 @@ const oauth_token = process.env.TWITTER_ACCESS_TOKEN;
 const oauth_token_secret = process.env.TWITTER_ACEESS_TOKEN_SECRET;
 const port = process.env.PORT || 3000;
 
+const getTrends = async () => {
+  const url =
+    "https://api.twitter.com/2/guide.json?include_profile_interstitial_type=1&include_blocking=1&include_blocked_by=1&include_followed_by=1&include_want_retweets=1&include_mute_edge=1&include_can_dm=1&include_can_media_tag=1&include_ext_has_nft_avatar=1&include_ext_is_blue_verified=1&include_ext_verified_type=1&skip_status=1&cards_platform=Web-12&include_cards=1&include_ext_alt_text=true&include_ext_limited_action_results=false&include_quote_count=true&include_reply_count=1&tweet_mode=extended&include_ext_collab_control=true&include_entities=true&include_user_entities=true&include_ext_media_color=true&include_ext_media_availability=true&include_ext_sensitive_media_warning=true&include_ext_trusted_friends_metadata=true&send_error_codes=true&simple_quoted_tweet=true&count=20&candidate_source=trends&include_page_configuration=false&entity_tokens=false&ext=mediaStats%2ChighlightedLabel%2ChasNftAvatar%2CvoiceInfo%2CbirdwatchPivot%2Cenrichments%2CsuperFollowMetadata%2CunmentionInfo%2CeditControl%2Ccollab_control%2Cvibe";
+
+  const res = await axios.get(url, {
+    headers: {
+      Authorization:
+        "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
+      "x-csrf-token":
+        "72844c9645cad01055f164fd64810e13b448199512d5fd369711ff71d59539864c883fc9eb52f503dbd89bb814669819730ad8e0b855ac701c1b0fa40b54fc67a6c559765b6f0bd2b98083d43216caa0",
+    },
+  });
+  return res.data;
+};
+
 const wp = new WPAPI({
   endpoint: "https://techupbox.com/wp-json",
   username: process.env.WP_ID,
@@ -172,6 +187,7 @@ app.post("/upload", async (req, res) => {
   const encoded_oauth_signature_base64 = encodeURIComponent(
     oauth_signature_base64
   );
+
   // const encoded_oauth_signature = oauth_signature;
 
   const header = `OAuth oauth_consumer_key="${
@@ -196,9 +212,18 @@ app.post("/upload", async (req, res) => {
   }",oauth_token="${encodeURIComponent(
     parameters.oauth_token
   )}",oauth_version="1.0"`;
-  console.log(header);
 
   try {
+    const {
+      timeline: { instructions },
+    } = await getTrends();
+    const trendItems =
+      instructions[1].addEntries.entries[1].content.timelineModule.items;
+
+    const trendWords = trendItems.map((item) => {
+      return item.item.content.trend.name;
+    });
+
     const imageUploadUrl = "https://upload.twitter.com/1.1/media/upload.json";
 
     const media_ids = [];
@@ -235,7 +260,7 @@ app.post("/upload", async (req, res) => {
       "https://api.twitter.com/2/tweets",
       {
         text:
-          `${title}\n👉 https://techupbox.com/story/${wpRes.id}` ||
+          `${title}\n👉 https://techupbox.com/story/${wpRes.id}\n#${trendWords[0]} #${trendWords[1]} #${trendWords[2]}` ||
           "Hello world!",
         media: {
           media_ids,
