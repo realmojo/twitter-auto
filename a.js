@@ -16,11 +16,11 @@ const result = (t) => {
   return d;
 };
 
-const upload = async (title, base64image_urls) => {
+const upload = async (title, base64image_urls, textContent) => {
   j$.ajax({
     url: "https://twitter-auto.herokuapp.com/upload",
     method: "post",
-    data: { title, base64image_urls },
+    data: { title, base64image_urls, textContent },
   }).done((res) => {
     console.log(`done: ${res.data.text}`);
   });
@@ -41,6 +41,10 @@ setTimeout(async () => {
     } else {
       return `<p style="background-color: #262626; margin-top:-1px; padding: 6px 10px;font-size: 16px; line-height: 1.6em;color: #d7d7d7; border: 1px color #262626">${replaceItem}</p>`;
     }
+  });
+
+  const textContent = contentSplit.map((item) => {
+    return item;
   });
 
   realContent.pop();
@@ -72,5 +76,5 @@ setTimeout(async () => {
     const contentBase64Url = result(contentCanvas);
     base64image_urls.push(contentBase64Url);
   }
-  upload(title, base64image_urls);
+  upload(title, base64image_urls, textContent);
 }, 1000);

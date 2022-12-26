@@ -65,6 +65,20 @@ const googleIndexing = (res) => {
   });
 };
 
+const getContent = (title, urls, textContent) => {
+  const length = textContent.length;
+  let html = "";
+  html += `<h2>${title}</h2>`;
+  if (textContent.length > 1) {
+    html += `<p>${textContent[0]}. ${textContent[1]}.</p>`;
+  }
+  html += base64toImage(title, urls);
+  for (let i = length - 2; i < length; i++) {
+    html += `<p>${textContent[i]}</p>`;
+  }
+  return html;
+};
+
 const base64toImage = (title, urls) => {
   let html = "";
   for (const url of urls) {
@@ -94,7 +108,7 @@ const encodeValue = (text) => {
   return encodedText;
 };
 app.post("/upload", async (req, res) => {
-  const { title, base64image_urls } = req.body;
+  const { title, base64image_urls, textContent } = req.body;
 
   const parameters = {
     oauth_consumer_key,
@@ -210,7 +224,7 @@ app.post("/upload", async (req, res) => {
     // 워드프레스 포스팅
     const wpRes = await wp.posts().create({
       title,
-      content: base64toImage(title, base64image_urls),
+      content: getContent(title, base64image_urls, textContent),
       categories: [41],
       tags: [42, 43, 44, 45],
       status: "publish",
