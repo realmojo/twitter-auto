@@ -28,12 +28,27 @@ const upload = async (title, base64image_urls, textContent) => {
 setTimeout(async () => {
   console.log("start");
   const title = await j$(".pann-title > h3").text().trim();
-  const contentP = j$(".content")[0];
-  const content = j$(contentP).text();
-  let contentSplit = content.split("\n");
+
+  let contentP = j$(".content > p");
+  let content = "";
+  let contentSplit = [];
+  if (contentP.length > 3) {
+    contentP = j$(".content > p");
+    for (let i in contentP) {
+      i = Number(i);
+      if (!isNaN(i)) {
+        contentSplit.push(j$(contentP[i]).text());
+      }
+    }
+  } else {
+    contentP = j$(".content")[0];
+    content = j$(contentP).text();
+    contentSplit = content.split("\n");
+  }
   contentSplit = contentSplit.filter((item) => {
     return item;
   });
+
   const realContent = contentSplit.map((item) => {
     const replaceItem = replaceAlld(item, "\t", "");
     if (!replaceItem.length) {
