@@ -51,7 +51,6 @@ setTimeout(async () => {
     }
 
     if (!isNaN(i)) {
-      // console.log(j$(contentP[i]).text());
       j$("#n-content-" + j).append(realContent[i]);
     }
     if (i % 10 === 9) {
