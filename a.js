@@ -15,6 +15,7 @@ const result = (t) => {
   d = d.replace("data:image/png;base64,", "");
   return d;
 };
+
 const upload = async (title, base64image_urls) => {
   j$.ajax({
     url: "https://twitter-auto.herokuapp.com/upload",
@@ -66,12 +67,10 @@ setTimeout(async () => {
 
   const base64image_urls = [];
   for (let i = 1; i <= j; i++) {
-    // if (i <= 4) {
     console.log(`${i}번째 이미지 생성중...`);
     const contentCanvas = await html2canvas(j$("#n-content-" + i)[0]);
     const contentBase64Url = result(contentCanvas);
     base64image_urls.push(contentBase64Url);
-    // }
   }
   upload(title, base64image_urls);
 }, 1000);

@@ -65,8 +65,12 @@ const googleIndexing = (res) => {
   });
 };
 
-const base64toImage = (title, url) => {
-  return `<img alt="${title}" src="data:image/png;base64,${url}" />`;
+const base64toImage = (title, urls) => {
+  let html = "";
+  for (const url of urls) {
+    html += `<img alt="${title}" src="data:image/png;base64,${url}" />`;
+  }
+  return html;
 };
 
 server.setTimeout(500000);
@@ -217,8 +221,8 @@ app.post("/upload", async (req, res) => {
       "https://api.twitter.com/2/tweets",
       {
         text:
-          `${title}\n
-          👉 https://techupbox.com/story/${wpRes.id}` || "Hello world!",
+          `${title}\n👉 https://techupbox.com/story/${wpRes.id}` ||
+          "Hello world!",
         media: {
           media_ids,
         },
