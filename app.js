@@ -73,7 +73,7 @@ const getContent = (title, urls, textContent) => {
     html += `<p>${textContent[0]}. ${textContent[1]}.</p>`;
   }
   html += base64toImage(title, urls);
-  for (let i = length - 2; i < length; i++) {
+  for (let i = 2; i < length; i++) {
     html += `<p>${textContent[i]}</p>`;
   }
   return html;
