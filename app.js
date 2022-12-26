@@ -9,7 +9,10 @@ const dotenv = require("dotenv");
 const axios = require("axios");
 const FormData = require("form-data");
 // const { base64Data } = require("./base64");
-const imageToBinary = require("./imageToBinary");
+const WPAPI = require("wpapi");
+// const imageToBinary = require("./imageToBinary");
+const request = require("request");
+const { google } = require("googleapis");
 
 dotenv.config();
 
@@ -20,6 +23,51 @@ const oauth_consumer_secret = process.env.TWITTER_API_SECRET_KEY;
 const oauth_token = process.env.TWITTER_ACCESS_TOKEN;
 const oauth_token_secret = process.env.TWITTER_ACEESS_TOKEN_SECRET;
 const port = process.env.PORT || 3000;
+
+const wp = new WPAPI({
+  endpoint: "https://techupbox.com/wp-json",
+  username: process.env.WP_ID,
+  password: process.env.WP_PASS,
+});
+
+const jwtClient = new google.auth.JWT(
+  process.env.CLIENT_EMAIL,
+  null,
+  process.env.PRIVATE_KEY,
+  ["https://www.googleapis.com/auth/indexing"],
+  null
+);
+
+const googleIndexing = (res) => {
+  const wpUrl = `https://techupbox.com/story/${res.id}`;
+
+  jwtClient.authorize(function (err, tokens) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    let options = {
+      url: "https://indexing.googleapis.com/v3/urlNotifications:publish",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      auth: { bearer: tokens.access_token },
+      json: {
+        url: wpUrl,
+        type: "URL_UPDATED",
+      },
+    };
+    request(options, function (error, response, body) {
+      console.log(body);
+      console.log(`${wpUrl} google indexing success.`);
+    });
+  });
+};
+
+const base64toImage = (title, url) => {
+  return `<img alt="${title}" src="data:image/png;base64,${url}" />`;
+};
 
 server.setTimeout(500000);
 
@@ -139,27 +187,38 @@ app.post("/upload", async (req, res) => {
     let i = 0;
     for (const base64image_url of base64image_urls) {
       console.log(`${++i} upload start`);
-
-      const formData = new FormData();
-      formData.append("media_data", base64image_url);
-      const res = await axios.post(imageUploadUrl, formData, {
-        headers: {
-          Authorization: headerBase64,
-          "content-type": "multipart/form-data",
-        },
-      });
-      if (res.data && res.data.media_id_string) {
-        media_ids.push(res.data.media_id_string);
+      if (i <= 4) {
+        const formData = new FormData();
+        formData.append("media_data", base64image_url);
+        const res = await axios.post(imageUploadUrl, formData, {
+          headers: {
+            Authorization: headerBase64,
+            "content-type": "multipart/form-data",
+          },
+        });
+        if (res.data && res.data.media_id_string) {
+          media_ids.push(res.data.media_id_string);
+        }
+        console.log(`${i} upload end`);
       }
-      console.log(`${i} upload end`);
     }
 
-    console.log(media_ids);
+    // 워드프레스 포스팅
+    const wpRes = await wp.posts().create({
+      title,
+      content: base64toImage(title, base64image_urls),
+      categories: [41],
+      tags: [42, 43, 44, 45],
+      status: "publish",
+    });
+    googleIndexing(wpRes);
 
     const result = await axios.post(
       "https://api.twitter.com/2/tweets",
       {
-        text: title || "Hello world!",
+        text:
+          `${title}\n
+          👉 https://techupbox.com/story/${wpRes.id}` || "Hello world!",
         media: {
           media_ids,
         },
@@ -170,8 +229,8 @@ app.post("/upload", async (req, res) => {
         },
       }
     );
-    console.log(result.data);
-    return res.send(result.data);
+
+    return res.status(200).send(result.data);
   } catch (e) {
     return res.status(500).send({ status: "error", message: e.response.data });
   }
