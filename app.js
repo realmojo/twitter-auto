@@ -261,8 +261,8 @@ app.post("/upload", async (req, res) => {
       "https://api.twitter.com/2/tweets",
       {
         text:
-          `${title}\n👉 https://techupbox.com/story/${wpRes.id}\n#${trendWords[0]} #${trendWords[1]} #${trendWords[2]}` ||
-          "Hello world!",
+          // `${title}\n👉 https://techupbox.com/story/${wpRes.id}\n#${trendWords[0]} #${trendWords[1]} #${trendWords[2]}` ||
+          `${title}` || "Hello world!",
         media: {
           media_ids,
         },
