@@ -191,7 +191,7 @@ app.post("/upload", async (req, res) => {
     let i = 0;
     for (const base64image_url of base64image_urls) {
       console.log(`${++i} upload start`);
-      if (i <= 4) {
+      if (i <= 1) {
         const formData = new FormData();
         formData.append("media_data", base64image_url);
         const res = await axios.post(imageUploadUrl, formData, {
