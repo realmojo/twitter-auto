@@ -19,6 +19,7 @@ const oauth_consumer_key = process.env.TWITTER_API_KEY;
 const oauth_consumer_secret = process.env.TWITTER_API_SECRET_KEY;
 const oauth_token = process.env.TWITTER_ACCESS_TOKEN;
 const oauth_token_secret = process.env.TWITTER_ACEESS_TOKEN_SECRET;
+const port = process.env.PORT || 3000;
 
 server.setTimeout(500000);
 
@@ -172,13 +173,10 @@ app.post("/upload", async (req, res) => {
     console.log(result.data);
     return res.send(result.data);
   } catch (e) {
-    console.log(e.response.data);
-    console.log("error");
     return res.status(500).send({ status: "error", message: e.response.data });
   }
 });
 
-const port = process.env.PORT || 4000;
 server.listen(port, () => {
   console.log(`Twtitter auto upload Server Open Port: ${port}`);
 });
