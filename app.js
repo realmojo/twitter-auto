@@ -109,6 +109,20 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors());
 
+app.get("/trends", async (req, res) => {
+  const {
+    timeline: { instructions },
+  } = await getTrends();
+  const trendItems =
+    instructions[1].addEntries.entries[1].content.timelineModule.items;
+
+  const trendWords = trendItems.map((item) => {
+    return item.item.content.trend.name;
+  });
+
+  res.status(200).send(trendWords);
+});
+
 app.get("/", async (req, res) => {
   console.log("hello world");
 
