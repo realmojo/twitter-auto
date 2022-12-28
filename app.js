@@ -13,6 +13,7 @@ const WPAPI = require("wpapi");
 // const iageToBinary = require("./imageToBinary");
 const request = require("request");
 const { google } = require("googleapis");
+const moreImage = require("./moreImage");
 
 dotenv.config();
 
@@ -179,7 +180,6 @@ app.post("/upload", async (req, res) => {
     oauth_consumer_secret
   )}&${encodeURIComponent(oauth_token_secret)}`;
 
-  console.log(signing_key);
   //서명 키로 base string을 sha1로 암호화
   const oauth_signature = crypto
     .createHmac("sha1", signing_key)
@@ -243,6 +243,18 @@ app.post("/upload", async (req, res) => {
         }
         console.log(`${i} upload end`);
       }
+    }
+
+    const moreFormData = new FormData();
+    moreFormData.append("media_data", moreImage);
+    const moreRes = await axios.post(imageUploadUrl, moreFormData, {
+      headers: {
+        Authorization: headerBase64,
+        "content-type": "multipart/form-data",
+      },
+    });
+    if (moreRes.data && moreRes.data.media_id_string) {
+      media_ids.push(moreRes.data.media_id_string);
     }
 
     // 워드프레스 포스팅
