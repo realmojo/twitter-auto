@@ -21,7 +21,7 @@ const result = (t) => {
 };
 
 const upload = async (title, base64image_urls, textContent) => {
-  j$.ajax({
+  $.ajax({
     url: "https://twitter-auto.herokuapp.com/upload",
     method: "post",
     data: { title, base64image_urls, textContent },
@@ -40,17 +40,13 @@ const getHost = () => {
 };
 
 const getTeamblind = async () => {
-  const title = await $(".article-view-head > h2");
+  const title = await $(".article-view-head > h2").text();
 
   let contentP = $("#contentArea");
   let content = "";
   let contentSplit = [];
-  console.log(contentP);
   content = contentP[0].innerText;
-  console.log(content);
   contentSplit = content.split("\n");
-  console.log(contentSplit);
-
   contentSplit = contentSplit.filter((item) => {
     return item;
   });
@@ -66,7 +62,7 @@ const getTeamblind = async () => {
     }
   });
 
-  let j = 1;
+  let j = 0;
   for (let i in realContent) {
     i = Number(i);
     if (i % 10 === 0) {
@@ -85,8 +81,8 @@ const getTeamblind = async () => {
   }
 
   const base64image_urls = [];
-  for (let i = 1; i <= j; i++) {
-    console.log(`${i}번째 이미지 생성중...`);
+  for (let i = 0; i < j; i++) {
+    console.log(`${i + 1}번째 이미지 생성중...`);
     const contentCanvas = await html2canvas($("#n-content-" + i)[0]);
     const contentBase64Url = result(contentCanvas);
     base64image_urls.push(contentBase64Url);
@@ -190,5 +186,5 @@ setTimeout(async () => {
   console.log(textContent);
 
   console.log("업로딩 중...");
-  // upload(title, base64image_urls, textContent);
+  upload(title, base64image_urls, textContent);
 }, 1000);

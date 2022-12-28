@@ -10,7 +10,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 // const { base64Data } = require("./base64");
 const WPAPI = require("wpapi");
-// const imageToBinary = require("./imageToBinary");
+// const iageToBinary = require("./imageToBinary");
 const request = require("request");
 const { google } = require("googleapis");
 
@@ -25,34 +25,12 @@ const oauth_token_secret = process.env.TWITTER_ACEESS_TOKEN_SECRET;
 const port = process.env.PORT || 3000;
 
 const getTrends = async () => {
-  const url =
-    "https://api.twitter.com/2/guide.json?count=100&candidate_source=trends";
-
-  const res = await axios.get(url, {
-    headers: {
-      Authorization:
-        "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
-      "x-twitter-client-language": "ko",
-      "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-      "x-twitter-active-user": "yes",
-      "x-twitter-utcoffset": "+0900",
-      "x-csrf-token":
-        "72844c9645cad01055f164fd64810e13b448199512d5fd369711ff71d59539864c883fc9eb52f503dbd89bb814669819730ad8e0b855ac701c1b0fa40b54fc67a6c559765b6f0bd2b98083d43216caa0",
-      origin: "https://twitter.com",
-      pragma: "no-cache",
-      referer: "https://twitter.com/",
-      "sec-ch-ua":
-        '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
-      "sec-ch-ua-mobile": "?0",
-      "sec-ch-ua-platform": "macOS",
-      "sec-fetch-dest": "empty",
-      "sec-fetch-mode": "cors",
-      "sec-fetch-site": "same-site",
-      "user-agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
-    },
-  });
-  return res.data;
+  try {
+    const { data } = await axios.get("http://115.85.182.17/trends");
+    return data;
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 const wp = new WPAPI({
@@ -125,17 +103,8 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors());
 
 app.get("/trends", async (req, res) => {
-  const {
-    timeline: { instructions },
-  } = await getTrends();
-  const trendItems =
-    instructions[1].addEntries.entries[1].content.timelineModule.items;
-
-  const trendWords = trendItems.map((item) => {
-    return item.item.content.trend.name;
-  });
-
-  res.status(200).send(trendWords);
+  const data = await getTrends();
+  res.status(200).send(data);
 });
 
 app.get("/", async (req, res) => {
@@ -244,16 +213,7 @@ app.post("/upload", async (req, res) => {
   )}",oauth_version="1.0"`;
 
   try {
-    const {
-      timeline: { instructions },
-    } = await getTrends();
-    const trendItems =
-      instructions[1].addEntries.entries[1].content.timelineModule.items;
-
-    const trendWords = trendItems.map((item) => {
-      return item.item.content.trend.name;
-    });
-
+    const trendWords = await getTrends();
     const imageUploadUrl = "https://upload.twitter.com/1.1/media/upload.json";
 
     const media_ids = [];
