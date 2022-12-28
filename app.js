@@ -82,6 +82,15 @@ const getContent = (title, urls, textContent) => {
     html += `<p>${textContent[0]}. ${textContent[1]}.</p>`;
   }
   html += base64toImage(title, urls);
+  html += `<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1963334904140891"
+     data-ad-slot="5622325360"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>`;
   for (let i = 2; i < length; i++) {
     html += `<p>${textContent[i]}</p>`;
   }
