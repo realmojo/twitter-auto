@@ -13,7 +13,7 @@ const WPAPI = require("wpapi");
 // const iageToBinary = require("./imageToBinary");
 const request = require("request");
 const { google } = require("googleapis");
-const moreImage = require("./moreImage");
+const { moreImage } = require("./moreImage");
 
 dotenv.config();
 
@@ -227,11 +227,12 @@ app.post("/upload", async (req, res) => {
 
     const media_ids = [];
     let i = 0;
-    for (const base64image_url of base64image_urls) {
-      console.log(`${++i} upload start`);
-      if (i <= 1) {
-        const formData = new FormData();
-        formData.append("media_data", base64image_url);
+
+    // 트위터 메인이랑 더보기 이미지 추가
+    for (let j = 0; j < 2; j++) {
+      const formData = new FormData();
+      if (j === 0) {
+        formData.append("media_data", base64image_urls[0]);
         const res = await axios.post(imageUploadUrl, formData, {
           headers: {
             Authorization: headerBase64,
@@ -242,19 +243,19 @@ app.post("/upload", async (req, res) => {
           media_ids.push(res.data.media_id_string);
         }
         console.log(`${i} upload end`);
+      } else if (j === 1) {
+        formData.append("media_data", moreImage);
+        const res = await axios.post(imageUploadUrl, formData, {
+          headers: {
+            Authorization: headerBase64,
+            "content-type": "multipart/form-data",
+          },
+        });
+        if (res.data && res.data.media_id_string) {
+          media_ids.push(res.data.media_id_string);
+        }
+        console.log(`${i} the more upload end`);
       }
-    }
-
-    const moreFormData = new FormData();
-    moreFormData.append("media_data", moreImage);
-    const moreRes = await axios.post(imageUploadUrl, moreFormData, {
-      headers: {
-        Authorization: headerBase64,
-        "content-type": "multipart/form-data",
-      },
-    });
-    if (moreRes.data && moreRes.data.media_id_string) {
-      media_ids.push(moreRes.data.media_id_string);
     }
 
     // 워드프레스 포스팅
@@ -286,7 +287,8 @@ app.post("/upload", async (req, res) => {
 
     return res.status(200).send(result.data);
   } catch (e) {
-    return res.status(500).send({ status: "error", message: e.response.data });
+    console.log(e);
+    return res.status(500).send({ status: "error", message: e });
   }
 });
 
