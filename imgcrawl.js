@@ -17,7 +17,7 @@ var profiles = document.getElementById("sidebar__profile");
 if (profiles) {
   profiles.remove();
 }
-var areaRelated = document.getElementById("area_related");
+var areaRelated = document.getElementsByClassName("area_related")[0];
 if (areaRelated) {
   areaRelated.remove();
 }
@@ -54,42 +54,21 @@ var doClose = () => {
   document.getElementById("img-crawl").remove();
 };
 
-var toDataURL = (src, callback) => {
-  var image = new Image();
-  image.crossOrigin = "anonymous";
-  var img = new Image();
-  img.crossOrigin = "anonymous";
-  console.log(2);
-  console.log(src);
-  image.src = src;
-  image.onload = function () {
-    var canvas = document.createElement("canvas");
-    var context = canvas.getContext("2d");
-    canvas.height = this.naturalHeight;
-    canvas.width = this.naturalWidth;
-    console.log(1);
-    context.drawImage(this, 0, 0);
-    var dataURL = canvas.toDataURL("image/png");
-    callback(dataURL);
-  };
-  console.log(4);
-};
-
 var downloadURI = (t, e) => {
   let n = document.createElement("a");
   (n.download = e), (n.href = t), document.body.appendChild(n), n.click();
 };
 
 var doDownload = () => {
-  console.log(imageInfo);
-
+  console.log("downloading ...");
   for (const info of imageInfo) {
     $.ajax({
       url: "https://twitter-auto.herokuapp.com/download",
       method: "post",
       data: { src: info.src, alt: info.alt },
     }).done((res) => {
-      console.log(`done: ${res}`);
+      console.log(`${res.alt} 이미지가 다운로드 완료되었습니다.`);
+      downloadURI(res.src, res.alt);
     });
   }
 };
@@ -120,6 +99,6 @@ div.innerHTML = `
 
 document.body.append(div);
 
-setTimeout(() => {
-  doDownload();
-}, 500);
+// setTimeout(() => {
+//   doDownload();
+// }, 500);
