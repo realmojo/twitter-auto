@@ -169,8 +169,25 @@ app.get("/", async (req, res) => {
   res.send("ok");
 });
 
+const imageDownload = async (uri, filename, callback) => {
+  request.head(uri, function (err, res, body) {
+    console.log("content-type:", res.headers["content-type"]);
+    console.log("content-length:", res.headers["content-length"]);
+
+    request(uri).pipe(fs.createWriteStream(filename)).on("close", callback);
+  });
+};
+
 app.post("/download", async (req, res) => {
   const { imageInfo } = req.body;
+
+  download(
+    "https://blog.kakaocdn.net/dn/bAODTG/btrQOAwGEgA/ZFm62Nkm9bavBEybvYMSXk/img.jpg",
+    "testd.png",
+    function () {
+      console.log("done");
+    }
+  );
 
   return res.status(200).send(imageInfo);
 });
