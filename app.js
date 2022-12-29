@@ -186,7 +186,7 @@ app.post("/download", async (req, res) => {
   //   console.log("done");
   // });
 
-  download(
+  imageDownload(
     "https://blog.kakaocdn.net/dn/bAODTG/btrQOAwGEgA/ZFm62Nkm9bavBEybvYMSXk/img.jpg",
     `${__dirname}/googdledd.png`,
     function () {
