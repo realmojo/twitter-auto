@@ -1,10 +1,10 @@
-const title = document.getElementsByTagName("title")[0].innerText;
-const imgObjects = document.getElementsByTagName("img");
+var title = document.getElementsByTagName("title")[0].innerText;
+var imgObjects = document.getElementsByTagName("img");
 
-let alt = "";
-let src = "";
-let obj = "";
-const imageInfo = [];
+var alt = "";
+var src = "";
+var obj = "";
+var imageInfo = [];
 
 for (let i in imgObjects) {
   i = Number(i);
@@ -25,13 +25,13 @@ for (let i in imgObjects) {
   }
 }
 
-let div = document.createElement("div");
+var div = document.createElement("div");
 
-const doClose = () => {
+var doClose = () => {
   document.getElementById("img-crawl").remove();
 };
 
-const toDataURL = (src, callback) => {
+var toDataURL = (src, callback) => {
   var image = new Image();
   image.crossOrigin = "Anonymous";
   image.onload = function () {
@@ -46,12 +46,12 @@ const toDataURL = (src, callback) => {
   image.src = src;
 };
 
-const downloadURI = (t, e) => {
+var downloadURI = (t, e) => {
   let n = document.createElement("a");
   (n.download = e), (n.href = t), document.body.appendChild(n), n.click();
 };
 
-const doDownload = () => {
+var doDownload = () => {
   for (const item of imageInfo) {
     toDataURL(item.src, (dataURL) => {
       downloadURI(dataURL, `${item.alt}.png`);
@@ -59,7 +59,7 @@ const doDownload = () => {
   }
 };
 
-let html = "";
+var html = "";
 for (const item of imageInfo) {
   html += '<div style="width: 300px; padding: 20px; display: inline-block">';
   html += `<img src="${item.src}" alt="${item.alt}" style="width: 100%;" />`;

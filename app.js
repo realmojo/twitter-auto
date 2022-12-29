@@ -125,9 +125,43 @@ app.get("/env", async (req, res) => {
   res.status(200).send(process.env);
 });
 
+app.get("/google", async (req, res) => {
+  res.status(200).send(jwtClient);
+});
+
+app.get("/indexingtest", async (req, res) => {
+  const wpUrl = `https://techupbox.com/story/2381`;
+
+  jwtClient.authorize(function (err, tokens) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    let options = {
+      url: "https://indexing.googleapis.com/v3/urlNotifications:publish",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      auth: { bearer: tokens.access_token },
+      json: {
+        url: wpUrl,
+        type: "URL_UPDATED",
+      },
+    };
+    request(options, function (error, response, body) {
+      res.status(200).send(body);
+      console.log(body);
+      console.log(`${wpUrl} google indexing success.`);
+      fs.writeFile("./log.txt", JSON.stringify(body), () => {
+        console.log("writed...");
+      });
+    });
+  });
+});
+
 app.get("/", async (req, res) => {
   console.log("hello world");
-
   res.send("ok");
 });
 const encodeValue = (text) => {
