@@ -1,3 +1,4 @@
+var head = document.getElementsByTagName("head")[0];
 var bScript = document.createElement("script");
 (bScript.type = "text/javascript"),
   (bScript.src =
@@ -81,13 +82,16 @@ var downloadURI = (t, e) => {
 
 var doDownload = () => {
   console.log(imageInfo);
-  $.ajax({
-    url: "https://twitter-auto.herokuapp.com/download",
-    method: "post",
-    data: { imageInfo },
-  }).done((res) => {
-    console.log(`done: ${res.data.text}`);
-  });
+
+  for (const info of imageInfo) {
+    $.ajax({
+      url: "https://twitter-auto.herokuapp.com/download",
+      method: "post",
+      data: { src: info.src, alt: info.alt },
+    }).done((res) => {
+      console.log(`done: ${res}`);
+    });
+  }
 };
 
 var html = "";

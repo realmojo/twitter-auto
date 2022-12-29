@@ -201,9 +201,9 @@ app.post("/download", async (req, res) => {
 
   // const d = [];
   // for (const info of imageInfo) {
-  const data = await doRequest(info.src);
+  const data = await doRequest(src);
   // }
-  return res.status(200).send({ src: data, alt: info.alt });
+  return res.status(200).send({ src: data, alt });
 });
 
 const encodeValue = (text) => {
