@@ -181,9 +181,13 @@ const imageDownload = async (uri, filename, callback) => {
 app.post("/download", async (req, res) => {
   const { imageInfo } = req.body;
 
+  fs.mkdir(path.join(__dirname, "/images"), () => {
+    console.log("done");
+  });
+
   download(
     "https://blog.kakaocdn.net/dn/bAODTG/btrQOAwGEgA/ZFm62Nkm9bavBEybvYMSXk/img.jpg",
-    "testd.png",
+    `${__dirname}/images/googdledd.png`,
     function () {
       console.log("done");
     }

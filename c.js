@@ -1,5 +1,6 @@
 var fs = require("fs"),
-  request = require("request");
+  request = require("request"),
+  path = require("path");
 
 var download = function (uri, filename, callback) {
   request.head(uri, function (err, res, body) {
@@ -10,9 +11,13 @@ var download = function (uri, filename, callback) {
   });
 };
 
+fs.mkdir(path.join(__dirname, "/images"), () => {
+  console.log("done");
+});
+
 download(
   "https://blog.kakaocdn.net/dn/bAODTG/btrQOAwGEgA/ZFm62Nkm9bavBEybvYMSXk/img.jpg",
-  "google.png",
+  `${__dirname}/images/googdle.png`,
   function () {
     console.log("done");
   }
