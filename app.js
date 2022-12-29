@@ -199,16 +199,18 @@ function doRequest(url) {
 app.post("/download", async (req, res) => {
   const { imageInfo } = req.body;
 
-  if (imageInfo.length > 0) {
-    const d = [];
-    for (const info of imageInfo) {
-      const data = await doRequest(info.src);
-      d.push(data);
-    }
-    return res.status(200).send(d);
-  } else {
-    return res.status(200).send("ok");
-  }
+  // if (imageInfo.length > 0) {
+  const d = [];
+  // for (const info of imageInfo) {
+  const data = await doRequest(
+    "https://blog.kakaocdn.net/dn/xYyDY/btrQOy6FkXc/WCKkk3Tg4Xc8EXftcpiAJk/img.jpg"
+  );
+  d.push(data);
+  // }
+  return res.status(200).send(d);
+  // } else {
+  //   return res.status(200).send("ok");
+  // }
 });
 
 const encodeValue = (text) => {
