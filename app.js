@@ -197,14 +197,13 @@ function doRequest(url) {
 }
 
 app.post("/download", async (req, res) => {
-  const { imageInfo } = req.body;
+  const { src, alt } = req.body;
 
-  const d = [];
-  for (const info of imageInfo) {
-    const data = await doRequest(info.src);
-    d.push({ src: data, alt: info.alt });
-  }
-  return res.status(200).send(d);
+  // const d = [];
+  // for (const info of imageInfo) {
+  const data = await doRequest(info.src);
+  // }
+  return res.status(200).send({ src: data, alt: info.alt });
 });
 
 const encodeValue = (text) => {
