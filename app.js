@@ -121,6 +121,10 @@ app.get("/trends", async (req, res) => {
   res.status(200).send(data);
 });
 
+app.get("/env", async (req, res) => {
+  res.status(200).send(process.env);
+});
+
 app.get("/", async (req, res) => {
   console.log("hello world");
 

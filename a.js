@@ -129,7 +129,7 @@ const getNatePann = async () => {
     }
   });
 
-  let j = 1;
+  let j = 0;
   for (let i in realContent) {
     i = Number(i);
     if (i % 10 === 0) {
@@ -149,8 +149,8 @@ const getNatePann = async () => {
   }
 
   const base64image_urls = [];
-  for (let i = 1; i <= j; i++) {
-    console.log(`${i}번째 이미지 생성중...`);
+  for (let i = 0; i < j; i++) {
+    console.log(`${i + 1}번째 이미지 생성중...`);
     const contentCanvas = await html2canvas(j$("#n-content-" + i)[0]);
     const contentBase64Url = result(contentCanvas);
     base64image_urls.push(contentBase64Url);
