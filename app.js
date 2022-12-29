@@ -11,11 +11,11 @@ const FormData = require("form-data");
 // const { base64Data } = require("./base64");
 const WPAPI = require("wpapi");
 // const iageToBinary = require("./imageToBinary");
-const request = require("request");
+// const request = require("request");
 const fs = require("fs");
 const { google } = require("googleapis");
-const path = require("path");
 const { moreImage } = require("./moreImage");
+const request = require("request").defaults({ encoding: null });
 
 dotenv.config();
 
@@ -179,22 +179,36 @@ const imageDownload = async (uri, filename, callback) => {
   });
 };
 
+function doRequest(url) {
+  return new Promise(function (resolve, reject) {
+    request(url, function (error, res, body) {
+      if (!error && res.statusCode === 200) {
+        let data =
+          "data:" +
+          res.headers["content-type"] +
+          ";base64," +
+          Buffer.from(body).toString("base64");
+        resolve(data);
+      } else {
+        reject(error);
+      }
+    });
+  });
+}
+
 app.post("/download", async (req, res) => {
   const { imageInfo } = req.body;
 
-  // fs.mkdir(path.join(__dirname, "/images"), () => {
-  //   console.log("done");
-  // });
-
-  imageDownload(
-    "https://blog.kakaocdn.net/dn/bAODTG/btrQOAwGEgA/ZFm62Nkm9bavBEybvYMSXk/img.jpg",
-    `${__dirname}/googdledd.png`,
-    function () {
-      console.log("done");
+  if (imageInfo.length > 0) {
+    const d = [];
+    for (const info of imageInfo) {
+      const data = await doRequest(info.src);
+      d.push(data);
     }
-  );
-
-  return res.status(200).send(imageInfo);
+    return res.status(200).send(d);
+  } else {
+    return res.status(200).send("ok");
+  }
 });
 
 const encodeValue = (text) => {
