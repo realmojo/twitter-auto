@@ -1,9 +1,3 @@
-var bScript = document.createElement("script");
-(bScript.type = "text/javascript"),
-  (bScript.src =
-    "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"),
-  head.appendChild(bScript);
-
 var recentlyPost = document.getElementById("sidebar__recent-posts");
 if (recentlyPost) {
   recentlyPost.remove();
@@ -42,6 +36,7 @@ for (let i in imgObjects) {
       imageInfo.push({
         alt,
         src,
+        obj,
       });
     }
   }
@@ -73,21 +68,78 @@ var toDataURL = (src, callback) => {
   };
   console.log(4);
 };
+// const getBase64Image = (img) => {
+//   console.log(img);
+//   var canvas = document.createElement("canvas");
 
-var downloadURI = (t, e) => {
+//   canvas.width = img.width;
+//   canvas.height = img.height;
+//   var ctx = canvas.getContext("2d");
+//   ctx.drawImage(img, 0, 0);
+//   console.log(canvas);
+//   var dataURL = canvas.toDataURL("image/png");
+//   return dataURL.replace(/^data:image\/?[A-z]*;base64,/);
+// };
+
+var imageURL =
+  "https://blog.kakaocdn.net/dn/bAODTG/btrQOAwGEgA/ZFm62Nkm9bavBEybvYMSXk/img.jpg";
+
+function startDownload() {
+  let imageURL =
+    "https://blog.kakaocdn.net/dn/bAODTG/btrQOAwGEgA/ZFm62Nkm9bavBEybvYMSXk/img.jpg";
+
+  downloadedImg = new Image();
+  downloadedImg.crossOrigin = "Anonymous";
+  downloadedImg.addEventListener("load", imageReceived, false);
+  downloadedImg.src = imageURL;
+}
+
+function imageReceived() {
+  let canvas = document.createElement("canvas");
+  let context = canvas.getContext("2d");
+
+  canvas.width = downloadedImg.width;
+  canvas.height = downloadedImg.height;
+
+  context.drawImage(downloadedImg, 0, 0);
+  imageBox.appendChild(canvas);
+
+  try {
+    localStorage.setItem("saved-image-example", canvas.toDataURL("image/png"));
+  } catch (err) {
+    console.log("Error: " + err);
+  }
+}
+startDownload();
+
+downloadedImg = new Image();
+downloadedImg.crossOrigin = "anonymous";
+downloadedImg.src = imageURL;
+downloadedImg.onload = function () {
+  var canvas = document.createElement("canvas");
+  var context = canvas.getContext("2d");
+  canvas.height = this.naturalHeight;
+  canvas.width = this.naturalWidth;
+  console.log(1);
+  context.drawImage(this, 0, 0);
+  var dataURL = canvas.toDataURL("image/png");
+  console.log(dataURL);
+};
+
+https: var downloadURI = (t, e) => {
   let n = document.createElement("a");
   (n.download = e), (n.href = t), document.body.appendChild(n), n.click();
 };
 
 var doDownload = () => {
-  console.log(imageInfo);
-  $.ajax({
-    url: "https://twitter-auto.herokuapp.com/download",
-    method: "post",
-    data: { imageInfo },
-  }).done((res) => {
-    console.log(`done: ${res.data.text}`);
-  });
+  for (const item of imageInfo) {
+    // console.log(item.src);
+    // const dataURL = getBase64Image(item.obj);
+    // console.log(dataURL);
+    toDataURL(item.src, (dataURL) => {
+      downloadURI(dataURL, `${item.alt}.png`);
+    });
+  }
 };
 
 var html = "";

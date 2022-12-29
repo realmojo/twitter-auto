@@ -168,6 +168,13 @@ app.get("/", async (req, res) => {
   console.log("hello world");
   res.send("ok");
 });
+
+app.post("/download", async (req, res) => {
+  const { imageInfo } = req.body;
+
+  return res.status(200).send(imageInfo);
+});
+
 const encodeValue = (text) => {
   const encodedText = encodeURIComponent(text).replace(
     /[_!'()*]/g,
