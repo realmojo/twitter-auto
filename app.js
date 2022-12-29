@@ -14,6 +14,7 @@ const WPAPI = require("wpapi");
 const request = require("request");
 const fs = require("fs");
 const { google } = require("googleapis");
+const path = require("path");
 const { moreImage } = require("./moreImage");
 
 dotenv.config();
