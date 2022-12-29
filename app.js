@@ -201,12 +201,12 @@ app.post("/download", async (req, res) => {
 
   // if (imageInfo.length > 0) {
   const d = [];
-  // for (const info of imageInfo) {
-  const data = await doRequest(
-    "https://blog.kakaocdn.net/dn/xYyDY/btrQOy6FkXc/WCKkk3Tg4Xc8EXftcpiAJk/img.jpg"
-  );
-  d.push(data);
-  // }
+  for (const info of imageInfo) {
+    const data = await doRequest(
+      "https://blog.kakaocdn.net/dn/xYyDY/btrQOy6FkXc/WCKkk3Tg4Xc8EXftcpiAJk/img.jpg"
+    );
+    d.push({ src: data, alt: info.alt });
+  }
   return res.status(200).send(d);
   // } else {
   //   return res.status(200).send("ok");
