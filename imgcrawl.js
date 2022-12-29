@@ -11,7 +11,7 @@ for (let i in imgObjects) {
   if (!isNaN(i)) {
     obj = imgObjects[i];
     alt = obj.alt ? `${obj.alt}-${i}` : `${title}-${i}`;
-    src = obj.attributes[0].value;
+    src = obj.currentSrc;
     if (
       src.startsWith("http") &&
       obj.clientHeight > 100 &&
@@ -20,7 +20,6 @@ for (let i in imgObjects) {
       imageInfo.push({
         alt,
         src,
-        obj,
       });
     }
   }
@@ -76,7 +75,7 @@ div.innerHTML = `
   <button onClick="doDownload();" style="font-size: 16px; line-height: 22px; border-radius: 15px; height: 40px; padding: 7px 20px 8px; background-color: #fce4c0; color: #815104; font-weight: normal; border: none; box-shadow: 0 2px 0 0 #cc8b24; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;">
     <span style="font-weight: normal; font-size: 18px; line-height: 24px; color: #815104;">Download</span>
   </button>
-  <button style="padding: 10px; color: white; font-size: 20px; " onClick="doClose()">✕</button>
+  <button style="padding: 10px;color: white;font-size: 20px;background: transparent;border: none;margin-top: -10px;" onClick="doClose()">✕</button>
 </div>
 <div style="clear:both;"></div>
 <div style="width: 100%; padding: 40px;">
