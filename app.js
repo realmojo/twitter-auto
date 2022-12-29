@@ -12,6 +12,7 @@ const FormData = require("form-data");
 const WPAPI = require("wpapi");
 // const iageToBinary = require("./imageToBinary");
 const request = require("request");
+const fs = require("fs");
 const { google } = require("googleapis");
 const { moreImage } = require("./moreImage");
 
@@ -71,6 +72,9 @@ const googleIndexing = (res) => {
     request(options, function (error, response, body) {
       console.log(body);
       console.log(`${wpUrl} google indexing success.`);
+      fs.writeFile("./log.txt", JSON.stringify(body), () => {
+        console.log("writed...");
+      });
     });
   });
 };
