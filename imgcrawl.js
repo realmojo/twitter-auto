@@ -22,6 +22,7 @@ if (areaRelated) {
   areaRelated.remove();
 }
 var title = document.getElementsByTagName("title")[0].innerText;
+title = title.split("-")[0].trim();
 var imgObjects = document.getElementsByTagName("img");
 
 var alt = "";

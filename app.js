@@ -80,6 +80,42 @@ const googleIndexing = (res) => {
   });
 };
 
+const googleIndexingByStorypickup = (url) => {
+  const jwcli = new google.auth.JWT(
+    process.env.CLIENT_STORYPICKUP_EMAIL,
+    null,
+    "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC87boSLBxQ19a1\n6Nv0rc8Zepvfo+F/XOTKLYdmHd7WIk090eI8KBFSdRCacDcd6Ov72l4tIw7WMOQK\nZKRQ/D+kOZqT/1Qywgg9LZR0sHuCV7pfA8dcKk+X8VQ66o6PAe3cgw33LQRc7TSS\nrMEXj+xLYlXuwEplDhNo0/5II1TjXtwuDSwGLUAtZNl/aG1HA32OhRN7wqV7mG8L\nFD1UgE/ll9lHA2G5HLqipy9kdFSHDJmVu/gTlruAMZ2chGDTADdK9fJkOhwpmj9e\nHwlHKU33EnrINwTigIFuG06nrvu7/7q68Q9elUfOVsd756s9hdjg2CbdGYLmdOEp\nPH+QwEztAgMBAAECggEAEZrpeuYHYXUredoQHRXRNaOaQNXJno+udjSV6GsiJ7wc\njIUxWr+1FYT5HhsU18Grs9Veb0BUEpuNtHY6ZZ2L5KbFg8MIOo6gK+tCaTlE2RmJ\nsW7tteXvcs43NiJDVIouexzvQTg9rtcfzgcxGxv7Pe8U6OGcTRxprJwMlvZL47/7\nKcOc9IJp+9yxqA6axw8X5i0hQREjbO1kF/yfzaKK2WwK4efOcyZ4Xkfl/u1hSCSW\nHHrap1vMfds2FNlwTb1iQQcT/rSxEQ2tx84KCCVgJa9+ERMZ86u1uHaYJDwfXtfh\nawt/PFeWI6Ez5DIy3u9TsSYFHq92kfOb6vUVh4/oVQKBgQDktnOrDA3NmsosHv05\nb2O9YTJx5NGDxjwUIkTI77AslyymhqRUiIT0UGgI3ihJQeWYmTlcuOzuADeial46\nkBEo+WYDER9gyCAPE7SIa8BShDnRXq7a5/qvC1bZ7k5U4fnUdlviOICVSfkqEjZQ\nX1Zir6xkuWfyuFDvTA/UbjZtmwKBgQDTeCdpadJhKifBVy+EQdo6x3VHv6u8IrxD\n4UbZXbbXJAsF5nJnO99ZzZp7CnPGSpDBTvduB9qlD/soVxmRO0aVUqNiZtHNX+/c\nzzkr4RgQ6Jy6UuN2cthCo09ERdZgjgNflb3eOMjC+3GL6nbquou9xR2UFSpHjxeA\nEl6oV1acFwKBgCzZBhdtVquRhcFfFkKT8BfrnkutFdRkI9XC3oAUWBR2VGAXGNQm\nrQOHXM8YWQf8bvwcV54x+Ou2iTJE71NGesbxGKrTSbbdp0OtloIFtwG3QesnSNxO\nDt8SNyamzx9f7HBYAS576+LaTYyNY68g8ryJPCHIJXT35Y72+EeskOmvAoGBALMM\n70Hf6dN/X/3iFkeDgoV2UKUZcw1u070dx2FQafmrePHb903Vcf2VipFXfkOM6xfi\nBrpRSB2udFfpt6oyaEcSm2g76rRb4LozcxLmGfxnGBzjBdlK0DVMFVeXUjaax9xs\n60B3D/WX9MIlGd8RaDSb67lwWkYQsDMuWptqp9itAoGBAKzVyRBBQImqcQSRlT2K\nRfoe4MM1ZVijppEg8Y5K9QGdGV/ADuUNyIFOiD3IpYQJj758e5Fk6F6cxGVAAk0L\npNYYMr/cydALM8L957a9GKXaaYoxVFqeekRzcW6qloToJwoq7o2FQa0usfXvoYhP\nm2+tfQM6WVSSqbc5AxFU99GY\n-----END PRIVATE KEY-----\n",
+    ["https://www.googleapis.com/auth/indexing"],
+    null
+  );
+
+  jwcli.authorize(function (err, tokens) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    let options = {
+      url: "https://indexing.googleapis.com/v3/urlNotifications:publish",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      auth: { bearer: tokens.access_token },
+      json: {
+        url: url,
+        type: "URL_UPDATED",
+      },
+    };
+    request(options, function (error, response, body) {
+      if (error) {
+        return res.status(500).send(error);
+      } else {
+        return res.status(200).send(body);
+      }
+    });
+  });
+};
+
 const getContent = (title, urls, textContent) => {
   const length = textContent.length;
   let html = "";
@@ -165,6 +201,49 @@ app.get("/indexingtest", async (req, res) => {
   });
 });
 
+app.get("/sp_indexingtest", async (req, res) => {
+  const url = `https://storypickup.com/humor/%EB%82%B4-%EC%96%BC%EA%B5%B4%EC%9D%B4-%EC%9C%A0%EB%A8%B8/`;
+
+  const jwcli = new google.auth.JWT(
+    process.env.CLIENT_STORYPICKUP_EMAIL,
+    null,
+    "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC87boSLBxQ19a1\n6Nv0rc8Zepvfo+F/XOTKLYdmHd7WIk090eI8KBFSdRCacDcd6Ov72l4tIw7WMOQK\nZKRQ/D+kOZqT/1Qywgg9LZR0sHuCV7pfA8dcKk+X8VQ66o6PAe3cgw33LQRc7TSS\nrMEXj+xLYlXuwEplDhNo0/5II1TjXtwuDSwGLUAtZNl/aG1HA32OhRN7wqV7mG8L\nFD1UgE/ll9lHA2G5HLqipy9kdFSHDJmVu/gTlruAMZ2chGDTADdK9fJkOhwpmj9e\nHwlHKU33EnrINwTigIFuG06nrvu7/7q68Q9elUfOVsd756s9hdjg2CbdGYLmdOEp\nPH+QwEztAgMBAAECggEAEZrpeuYHYXUredoQHRXRNaOaQNXJno+udjSV6GsiJ7wc\njIUxWr+1FYT5HhsU18Grs9Veb0BUEpuNtHY6ZZ2L5KbFg8MIOo6gK+tCaTlE2RmJ\nsW7tteXvcs43NiJDVIouexzvQTg9rtcfzgcxGxv7Pe8U6OGcTRxprJwMlvZL47/7\nKcOc9IJp+9yxqA6axw8X5i0hQREjbO1kF/yfzaKK2WwK4efOcyZ4Xkfl/u1hSCSW\nHHrap1vMfds2FNlwTb1iQQcT/rSxEQ2tx84KCCVgJa9+ERMZ86u1uHaYJDwfXtfh\nawt/PFeWI6Ez5DIy3u9TsSYFHq92kfOb6vUVh4/oVQKBgQDktnOrDA3NmsosHv05\nb2O9YTJx5NGDxjwUIkTI77AslyymhqRUiIT0UGgI3ihJQeWYmTlcuOzuADeial46\nkBEo+WYDER9gyCAPE7SIa8BShDnRXq7a5/qvC1bZ7k5U4fnUdlviOICVSfkqEjZQ\nX1Zir6xkuWfyuFDvTA/UbjZtmwKBgQDTeCdpadJhKifBVy+EQdo6x3VHv6u8IrxD\n4UbZXbbXJAsF5nJnO99ZzZp7CnPGSpDBTvduB9qlD/soVxmRO0aVUqNiZtHNX+/c\nzzkr4RgQ6Jy6UuN2cthCo09ERdZgjgNflb3eOMjC+3GL6nbquou9xR2UFSpHjxeA\nEl6oV1acFwKBgCzZBhdtVquRhcFfFkKT8BfrnkutFdRkI9XC3oAUWBR2VGAXGNQm\nrQOHXM8YWQf8bvwcV54x+Ou2iTJE71NGesbxGKrTSbbdp0OtloIFtwG3QesnSNxO\nDt8SNyamzx9f7HBYAS576+LaTYyNY68g8ryJPCHIJXT35Y72+EeskOmvAoGBALMM\n70Hf6dN/X/3iFkeDgoV2UKUZcw1u070dx2FQafmrePHb903Vcf2VipFXfkOM6xfi\nBrpRSB2udFfpt6oyaEcSm2g76rRb4LozcxLmGfxnGBzjBdlK0DVMFVeXUjaax9xs\n60B3D/WX9MIlGd8RaDSb67lwWkYQsDMuWptqp9itAoGBAKzVyRBBQImqcQSRlT2K\nRfoe4MM1ZVijppEg8Y5K9QGdGV/ADuUNyIFOiD3IpYQJj758e5Fk6F6cxGVAAk0L\npNYYMr/cydALM8L957a9GKXaaYoxVFqeekRzcW6qloToJwoq7o2FQa0usfXvoYhP\nm2+tfQM6WVSSqbc5AxFU99GY\n-----END PRIVATE KEY-----\n",
+    ["https://www.googleapis.com/auth/indexing"],
+    null
+  );
+
+  jwcli.authorize(function (err, tokens) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    let options = {
+      url: "https://indexing.googleapis.com/v3/urlNotifications:publish",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      auth: { bearer: tokens.access_token },
+      json: {
+        url: url,
+        type: "URL_UPDATED",
+      },
+    };
+    request(options, function (error, response, body) {
+      if (error) {
+        return res.status(500).send(error);
+      } else {
+        return res.status(200).send(body);
+      }
+      // console.log(body);
+      // console.log(`${wpUrl} google indexing success.`);
+      // fs.writeFile("./log.txt", JSON.stringify(body), () => {
+      //   console.log("writed...");
+      // });
+    });
+  });
+});
+
 app.get("/", async (req, res) => {
   console.log("hello world");
   res.send("ok");
@@ -217,6 +296,10 @@ const encodeValue = (text) => {
 };
 app.post("/upload", async (req, res) => {
   const { title, base64image_urls, textContent } = req.body;
+  let { bo_table } = req.body;
+  if (!bo_table) {
+    bo_table = "worry";
+  }
 
   const parameters = {
     oauth_consumer_key,
@@ -342,21 +425,36 @@ app.post("/upload", async (req, res) => {
       }
     }
 
-    // 워드프레스 포스팅
-    const wpRes = await wp.posts().create({
-      title,
-      content: getContent(title, base64image_urls, textContent),
-      categories: [41],
-      tags: [42, 43, 44, 45],
-      status: "publish",
-    });
-    googleIndexing(wpRes);
+    // 스토리픽업 포스팅
+    const spFormData = new FormData();
+    spFormData.append("bo_table", bo_table);
+    spFormData.append("html", "html1");
+    spFormData.append("wr_subject", title);
+    spFormData.append("wr_content", textContent);
 
+    const rrr = await axios.post(
+      "https://storypickup.com/bbs/write_auto.php",
+      spFormData
+    );
+
+    let returnUrl = rrr.data;
+
+    // 워드프레스 포스팅
+    // const wpRes = await wp.posts().create({
+    //   title,
+    //   content: getContent(title, base64image_urls, textContent),
+    //   categories: [41],
+    //   tags: [42, 43, 44, 45],
+    //   status: "publish",
+    // });
+    googleIndexingByStorypickup(returnUrl);
+
+    // 트위터 포스팅
     const result = await axios.post(
       "https://api.twitter.com/2/tweets",
       {
         text:
-          `${title}\n👉 https://techupbox.com/story/${wpRes.id}\n${trendWords[0]} ${trendWords[1]} ${trendWords[2]} ${trendWords[3]} ${trendWords[4]}` ||
+          `${title}\n👉 ${returnUrl} ${trendWords[1]} ${trendWords[2]} ${trendWords[3]} ${trendWords[4]}` ||
           "Hello world!",
         media: {
           media_ids,
