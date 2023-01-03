@@ -428,9 +428,9 @@ app.post("/upload", async (req, res) => {
     // 스토리픽업 포스팅
     const spFormData = new FormData();
     spFormData.append("bo_table", bo_table);
-    spFormData.append("html", "html1");
+    // spFormData.append("html", "html1");
     spFormData.append("wr_subject", title);
-    spFormData.append("wr_content", textContent.join("\n"));
+    spFormData.append("wr_content", textContent.join("<br/>"));
 
     const rrr = await axios.post(
       "https://storypickup.com/bbs/write_auto.php",
