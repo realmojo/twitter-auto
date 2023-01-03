@@ -24,7 +24,7 @@ const upload = async (title, base64image_urls, textContent) => {
   $.ajax({
     url: "https://twitter-auto.herokuapp.com/upload",
     method: "post",
-    data: { title, base64image_urls, textContent },
+    data: { title, base64image_urls, textContent, bo_table: "worry" },
   }).done((res) => {
     console.log(`done: ${res.data.text}`);
   });

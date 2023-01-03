@@ -430,7 +430,7 @@ app.post("/upload", async (req, res) => {
     spFormData.append("bo_table", bo_table);
     spFormData.append("html", "html1");
     spFormData.append("wr_subject", title);
-    spFormData.append("wr_content", textContent);
+    spFormData.append("wr_content", textContent.join("\n"));
 
     const rrr = await axios.post(
       "https://storypickup.com/bbs/write_auto.php",
