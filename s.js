@@ -26,7 +26,7 @@ const upload = async (title, textContent) => {
     method: "post",
     data: { title, textContent, bo_table: "worry" },
   }).done((res) => {
-    console.log(`done: ${res.data}`);
+    console.log(`done: ${res}`);
   });
 };
 
@@ -167,7 +167,6 @@ setTimeout(async () => {
   console.log("start");
 
   let title = "";
-  let base64image_urls = [];
   let textContent = [];
   if (getHost() === "pann") {
     const d = await getNatePann();
